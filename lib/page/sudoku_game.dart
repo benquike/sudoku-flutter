@@ -716,6 +716,9 @@ class _SudokuGamePageState extends State<SudokuGamePage>
     Color gridCellBackgroundColor;
 
     if (!_highlightEnabled) {
+      if (index == _chooseSudokuBox) {
+        return Color.fromARGB(255, 0x7A, 0xF8, 0xF8);
+      }
       // Highlighting is disabled, return default colors
       if (Matrix.getZone(index: index).isOdd) {
         gridCellBackgroundColor = Colors.white;

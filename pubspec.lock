@@ -169,6 +169,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.5+3"
+  change_case:
+    dependency: transitive
+    description:
+      name: change_case
+      sha256: e41ef3df58521194ef8d7649928954805aeb08061917cf658322305e61568003
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   characters:
     dependency: transitive
     description:
@@ -205,10 +213,10 @@ packages:
     dependency: transitive
     description:
       name: code_assets
-      sha256: ae0db647e668cbb295a3527f0938e4039e004c80099dce2f964102373f5ce0b5
+      sha256: "83ccdaa064c980b5596c35dd64a8d3ecc68620174ab9b90b6343b753aa721687"
       url: "https://pub.dev"
     source: hosted
-    version: "0.19.10"
+    version: "1.0.0"
   code_builder:
     dependency: transitive
     description:
@@ -269,10 +277,18 @@ packages:
     dependency: transitive
     description:
       name: dartcv4
-      sha256: "0e2e3473cbbbcca47a7da4153ee11a93faec19598809d4564a8fb35910b7fbce"
+      sha256: "2481c3a0b542c39c421512499be17314b7fcd6e6da43b2a1dde19a04c4eaa01f"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.8"
+    version: "2.1.0+1"
+  data_assets:
+    dependency: transitive
+    description:
+      name: data_assets
+      sha256: d8b93648a338f471e576e0ba05f6b5d63a4e0fa447ca839a500267421d9245ba
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.19.6"
   fake_async:
     dependency: transitive
     description:
@@ -505,10 +521,10 @@ packages:
     dependency: transitive
     description:
       name: hooks
-      sha256: "5410b9f4f6c9f01e8ff0eb81c9801ea13a3c3d39f8f0b1613cda08e27eab3c18"
+      sha256: "5d309c86e7ce34cd8e37aa71cb30cb652d3829b900ab145e4d9da564b31d59f7"
       url: "https://pub.dev"
     source: hosted
-    version: "0.20.5"
+    version: "1.0.0"
   http:
     dependency: transitive
     description:
@@ -677,30 +693,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
-  native_toolchain_c:
+  native_toolchain_cmake:
     dependency: transitive
     description:
-      name: native_toolchain_c
-      sha256: f8872ea6c7a50ce08db9ae280ca2b8efdd973157ce462826c82f3c3051d154ce
+      name: native_toolchain_cmake
+      sha256: a04308095b8cf44c04920d588444f6da51126efa601ade17defdebf1485ba875
       url: "https://pub.dev"
     source: hosted
-    version: "0.17.2"
-  objective_c:
-    dependency: transitive
-    description:
-      name: objective_c
-      sha256: "55eb67ede1002d9771b3f9264d2c9d30bc364f0267bc1c6cc0883280d5f0c7cb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "9.2.2"
+    version: "0.2.2"
   opencv_dart:
     dependency: "direct main"
     description:
       name: opencv_dart
-      sha256: c6479bd5fa8afc63813e6ced540c81c009fc7db9d8e7e1c2e1463b3a9857f40f
+      sha256: "744899196c6275996c031b96d1ca176f7480c57d373b97dd2cf72b818ea28cda"
       url: "https://pub.dev"
     source: hosted
-    version: "1.4.5"
+    version: "2.1.0"
   package_config:
     dependency: transitive
     description:
@@ -745,10 +753,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_foundation
-      sha256: "2a376b7d6392d80cd3705782d2caa734ca4727776db0b6ec36ef3f1855197699"
+      sha256: "6d13aece7b3f5c5a9731eaf553ff9dcbc2eff41087fd2df587fd0fed9a3eb0c4"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.5.1"
   path_provider_linux:
     dependency: transitive
     description:
@@ -1179,5 +1187,5 @@ packages:
     source: hosted
     version: "2.2.3"
 sdks:
-  dart: ">=3.10.3 <4.0.0"
-  flutter: ">=3.38.4"
+  dart: ">=3.10.0 <4.0.0"
+  flutter: ">=3.38.1"

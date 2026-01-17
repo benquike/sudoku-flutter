@@ -765,11 +765,7 @@ class _SudokuGamePageState extends State<SudokuGamePage>
             fontFamily: fontFamily,
             fontWeight: textFontWeight,
             color: textColor,
-            // 提示线
-            decoration: TextDecoration.underline,
-            decorationStyle: TextDecorationStyle.wavy,
-            decorationColor: Colors.deepOrangeAccent,
-            decorationThickness: 2.0,
+
           ));
     }
 

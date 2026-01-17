@@ -769,13 +769,23 @@ class _SudokuGamePageState extends State<SudokuGamePage>
           ));
     }
 
+    int row = index ~/ 9;
+    int col = index % 9;
+
     final _cellContainer = Center(
       child: Container(
         alignment: Alignment.center,
         margin: EdgeInsets.all(1),
         decoration: BoxDecoration(
             color: _gridCellBgColor(index),
-            border: Border.all(color: Colors.black12)),
+            border: Border(
+              top: BorderSide(
+                  width: (row % 3 == 0) ? 1.5 : 0.5,
+                  color: (row % 3 == 0) ? Colors.black : Colors.black12),
+              left: BorderSide(
+                  width: (col % 3 == 0) ? 1.5 : 0.5,
+                  color: (col % 3 == 0) ? Colors.black : Colors.black12),
+            )),
         child: _textContainer,
       ),
     );
@@ -953,30 +963,38 @@ class _SudokuGamePageState extends State<SudokuGamePage>
 
           /// 9 x 9 cells sudoku puzzle board
           /// the whole sudoku game draw it here
-          GridView.builder(
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: 81,
-              gridDelegate:
-                  SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 9),
-              itemBuilder: ((BuildContext context, int index) {
-                int num = -1;
-                if (_state.sudoku?.puzzle.length == 81) {
-                  num = _state.sudoku!.puzzle[index];
-                }
+          Container(
+            decoration: BoxDecoration(
+              border: Border(
+                right: BorderSide(color: Colors.black, width: 1.5),
+                bottom: BorderSide(color: Colors.black, width: 1.5),
+              ),
+            ),
+            child: GridView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: 81,
+                gridDelegate:
+                    SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 9),
+                itemBuilder: ((BuildContext context, int index) {
+                  int num = -1;
+                  if (_state.sudoku?.puzzle.length == 81) {
+                    num = _state.sudoku!.puzzle[index];
+                  }
 
-                // 用户做标记
-                bool isUserMark = _state.sudoku!.puzzle[index] == -1 &&
-                    _state.mark[index].any((element) => element);
+                  // 用户做标记
+                  bool isUserMark = _state.sudoku!.puzzle[index] == -1 &&
+                      _state.mark[index].any((element) => element);
 
-                if (isUserMark) {
-                  return _markGridCellWidget(
-                      context, index, _cellOnTapBuilder(index));
-                }
+                  if (isUserMark) {
+                    return _markGridCellWidget(
+                        context, index, _cellOnTapBuilder(index));
+                  }
 
-                return _gridCellWidget(
-                    context, index, num, _cellOnTapBuilder(index));
-              })),
+                  return _gridCellWidget(
+                      context, index, num, _cellOnTapBuilder(index));
+                })),
+          ),
 
           /// user input zone
           /// use fillZone choose number fill cells or mark notes

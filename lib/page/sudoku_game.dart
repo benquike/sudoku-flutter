@@ -101,6 +101,13 @@ final highlightAssetSvg = SvgPicture.asset(
   colorFilter: ColorFilter.mode(Colors.black54, BlendMode.srcIn),
 );
 
+final intelModeAssetSvg = SvgPicture.asset(
+  "assets/svg/intel_mode.svg",
+  width: 40,
+  height: 40,
+  colorFilter: ColorFilter.mode(Colors.black54, BlendMode.srcIn),
+);
+
 class SudokuGamePage extends StatefulWidget {
   SudokuGamePage({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -122,6 +129,7 @@ class _SudokuGamePageState extends State<SudokuGamePage>
   bool _markOpen = false;
   bool _manualPause = false;
   bool _highlightEnabled = true;
+  bool _intelModeEnabled = false;
 
   SudokuState get _state => ScopedModel.of<SudokuState>(context);
 
@@ -630,74 +638,93 @@ class _SudokuGamePageState extends State<SudokuGamePage>
     return Container(
         // color: Colors.black,
         padding: EdgeInsets.all(5),
-        child: Row(children: <Widget>[
-          // 暂停游戏 pause game button
-          Expanded(
-              flex: 1,
-              child: Align(
-                alignment: Alignment.center,
-                child: CupertinoButton(
-                  padding: EdgeInsets.all(3),
-                  onPressed: pauseOnPressed,
-                  child: _toolContentWrapper(timerPauseAssetSvg, pauseText),
-                ),
-                // child: Text(pauseText, style: TextStyle(fontSize: 15)),
-              )),
-          // 提示 tips
-          Expanded(
-              flex: 1,
-              child: Align(
+        child: Column(children: [
+          Row(children: <Widget>[
+            // 暂停游戏 pause game button
+            Expanded(
+                flex: 1,
+                child: Align(
                   alignment: Alignment.center,
                   child: CupertinoButton(
                     padding: EdgeInsets.all(3),
-                    onPressed: tipsOnPressed,
-                    child: _state.hint > 0
-                        ? _toolContentWrapper(lightbulbAssetSvg, tipsText)
-                        : _toolContentWrapper(
-                            lightbulbDisableAssetSvg, tipsText,
-                            labelColor: Colors.black12),
-                    // child: Text(tipsText, style: TextStyle(fontSize: 15)),
-                  ))),
-          // 笔记 mark record
-          Expanded(
-              flex: 1,
-              child: Align(
-                  alignment: Alignment.center,
-                  child: CupertinoButton(
-                    padding: EdgeInsets.all(3),
-                    onPressed: markOnPressed,
-                    child: _toolContentWrapper(noteAltAssetSvg,
-                        _markOpen ? closeMarkText : enableMarkText),
-                    // child: Text("${_markOpen ? closeMarkText : enableMarkText}",
-                    //     style: TextStyle(fontSize: 15)),
-                  ))),
-          // Highlight button
-          Expanded(
-              flex: 1,
-              child: Align(
-                  alignment: Alignment.center,
-                  child: CupertinoButton(
-                    padding: EdgeInsets.all(3),
-                    onPressed: () {
-                      setState(() {
-                        _highlightEnabled = !_highlightEnabled;
-                      });
-                    },
-                    child: _toolContentWrapper(highlightAssetSvg, "Highlight"),
-                  ))),
-          // 退出 exit
-          Expanded(
-              flex: 1,
-              child: Align(
-                  alignment: Alignment.center,
-                  child: CupertinoButton(
-                    padding: EdgeInsets.all(3),
-                    onPressed: exitGameOnPressed,
-                    child: _toolContentWrapper(exitToAppAssetSvg, exitGameText),
-                    // child: Text(exitGameText, style: TextStyle(fontSize: 15)),
-                  ))),
-          // 占位符，测试用
-          // Expanded(flex: 5, child: Text("")),
+                    onPressed: pauseOnPressed,
+                    child: _toolContentWrapper(timerPauseAssetSvg, pauseText),
+                  ),
+                  // child: Text(pauseText, style: TextStyle(fontSize: 15)),
+                )),
+            // 提示 tips
+            Expanded(
+                flex: 1,
+                child: Align(
+                    alignment: Alignment.center,
+                    child: CupertinoButton(
+                      padding: EdgeInsets.all(3),
+                      onPressed: tipsOnPressed,
+                      child: _state.hint > 0
+                          ? _toolContentWrapper(lightbulbAssetSvg, tipsText)
+                          : _toolContentWrapper(
+                              lightbulbDisableAssetSvg, tipsText,
+                              labelColor: Colors.black12),
+                      // child: Text(tipsText, style: TextStyle(fontSize: 15)),
+                    ))),
+            // 笔记 mark record
+            Expanded(
+                flex: 1,
+                child: Align(
+                    alignment: Alignment.center,
+                    child: CupertinoButton(
+                      padding: EdgeInsets.all(3),
+                      onPressed: markOnPressed,
+                      child: _toolContentWrapper(noteAltAssetSvg,
+                          _markOpen ? closeMarkText : enableMarkText),
+                      // child: Text("${_markOpen ? closeMarkText : enableMarkText}",
+                      //     style: TextStyle(fontSize: 15)),
+                    ))),
+            // Highlight button
+            Expanded(
+                flex: 1,
+                child: Align(
+                    alignment: Alignment.center,
+                    child: CupertinoButton(
+                      padding: EdgeInsets.all(3),
+                      onPressed: () {
+                        setState(() {
+                          _highlightEnabled = !_highlightEnabled;
+                        });
+                      },
+                      child:
+                          _toolContentWrapper(highlightAssetSvg, "Highlight"),
+                    ))),
+            // 退出 exit
+            Expanded(
+                flex: 1,
+                child: Align(
+                    alignment: Alignment.center,
+                    child: CupertinoButton(
+                      padding: EdgeInsets.all(3),
+                      onPressed: exitGameOnPressed,
+                      child: _toolContentWrapper(
+                          exitToAppAssetSvg, exitGameText),
+                      // child: Text(exitGameText, style: TextStyle(fontSize: 15)),
+                    ))),
+          ]),
+          Row(children: <Widget>[
+            // Intel Mode button
+            Expanded(
+                flex: 1,
+                child: Align(
+                    alignment: Alignment.center,
+                    child: CupertinoButton(
+                      padding: EdgeInsets.all(3),
+                      onPressed: () {
+                        setState(() {
+                          _intelModeEnabled = !_intelModeEnabled;
+                        });
+                      },
+                      child: _toolContentWrapper(intelModeAssetSvg, "Intel Mode"),
+                    ))),
+            Spacer(flex: 4),
+          ])
         ]));
   }
 

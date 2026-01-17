@@ -305,6 +305,16 @@ class _SudokuGamePageState extends State<SudokuGamePage>
     }
   }
 
+  int _getNumberStock(int num) {
+    if (_state.sudoku == null) {
+      return 0;
+    }
+    int puzzleLength =
+        _state.sudoku!.puzzle.where((element) => element == num).length;
+    int recordLength = _state.record.where((element) => element == num).length;
+    return 9 - (puzzleLength + recordLength);
+  }
+
   // fill zone [ 1 - 9 ]
   Widget _fillZone(BuildContext context) {
     List<Widget> fillTools = List.generate(9, (index) {
@@ -381,20 +391,51 @@ class _SudokuGamePageState extends State<SudokuGamePage>
       Color markFontColor = hasNumStock ? Colors.white : Colors.white;
       Color markBgColor = hasNumStock ? Colors.black : Colors.white24;
 
+      int stock = _getNumberStock(num);
+
       return Expanded(
           flex: 1,
           child: Container(
-              margin: EdgeInsets.all(2),
-              decoration: BoxDecoration(border: BorderDirectional()),
-              child: CupertinoButton(
-                  color: _markOpen ? markBgColor : recordBgColor,
-                  padding: EdgeInsets.all(1),
-                  child: Text('${index + 1}',
-                      style: TextStyle(
-                          color: _markOpen ? markFontColor : recordFontColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold)),
-                  onPressed: fillOnPressed)));
+            margin: EdgeInsets.all(2),
+            decoration: BoxDecoration(border: BorderDirectional()),
+            child: Stack(
+              children: [
+                CupertinoButton(
+                    color: _markOpen ? markBgColor : recordBgColor,
+                    padding: EdgeInsets.all(1),
+                    child: Text('${index + 1}',
+                        style: TextStyle(
+                            color: _markOpen ? markFontColor : recordFontColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold)),
+                    onPressed: fillOnPressed),
+                if (stock > 0)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      constraints: BoxConstraints(
+                        minWidth: 14,
+                        minHeight: 14,
+                      ),
+                      child: Text(
+                        '$stock',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )
+              ],
+            ),
+          ));
     });
 
     fillTools.add(Expanded(

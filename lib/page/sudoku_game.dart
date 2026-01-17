@@ -730,16 +730,16 @@ class _SudokuGamePageState extends State<SudokuGamePage>
     if (puzzle[index] == -1) {
       num = record[index];
       // from puzzle number with readonly
-      textFontWeight = FontWeight.normal;
+      textFontWeight = FontWeight.w700; // Changed to match prefilled numbers
 
       if (record[index] != -1 && record[index] != solution[index]) {
         // is wrong input because not match solution
         textColor = Colors.red;
       } else {
         // from user input num
-        textColor = Colors.black87;
-        fontFamily = "handwriting_digits";
-        fontSize = 28;
+        textColor = Colors.red; // Changed to red
+        fontFamily = null;      // Changed to null (default font)
+        fontSize = 25;          // Changed to match prefilled numbers
       }
     }
 

@@ -94,6 +94,13 @@ final exitToAppAssetSvg = SvgPicture.asset(
   colorFilter: ColorFilter.mode(Colors.black54, BlendMode.srcIn),
 );
 
+final highlightAssetSvg = SvgPicture.asset(
+  "assets/svg/highlight.svg",
+  width: 40,
+  height: 40,
+  colorFilter: ColorFilter.mode(Colors.black54, BlendMode.srcIn),
+);
+
 class SudokuGamePage extends StatefulWidget {
   SudokuGamePage({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -114,6 +121,7 @@ class _SudokuGamePageState extends State<SudokuGamePage>
   int _perceptionNum = 0;
   bool _markOpen = false;
   bool _manualPause = false;
+  bool _highlightEnabled = true;
 
   SudokuState get _state => ScopedModel.of<SudokuState>(context);
 
@@ -663,6 +671,20 @@ class _SudokuGamePageState extends State<SudokuGamePage>
                     // child: Text("${_markOpen ? closeMarkText : enableMarkText}",
                     //     style: TextStyle(fontSize: 15)),
                   ))),
+          // Highlight button
+          Expanded(
+              flex: 1,
+              child: Align(
+                  alignment: Alignment.center,
+                  child: CupertinoButton(
+                    padding: EdgeInsets.all(3),
+                    onPressed: () {
+                      setState(() {
+                        _highlightEnabled = !_highlightEnabled;
+                      });
+                    },
+                    child: _toolContentWrapper(highlightAssetSvg, "Highlight"),
+                  ))),
           // 退出 exit
           Expanded(
               flex: 1,
@@ -692,6 +714,16 @@ class _SudokuGamePageState extends State<SudokuGamePage>
   /// 计算网格背景色
   Color _gridCellBgColor(int index) {
     Color gridCellBackgroundColor;
+
+    if (!_highlightEnabled) {
+      // Highlighting is disabled, return default colors
+      if (Matrix.getZone(index: index).isOdd) {
+        gridCellBackgroundColor = Colors.white;
+      } else {
+        gridCellBackgroundColor = Color.fromARGB(255, 0xEE, 0xEE, 0xEE);
+      }
+      return gridCellBackgroundColor;
+    }
 
     int currentNum = -1;
     if (_state.sudoku != null) {

@@ -860,21 +860,44 @@ class _SudokuGamePageState extends State<SudokuGamePage>
   /// 更新关联
   /// 用户每次选择框(cell)时,需要更新其关联的 行 列 宫 方便背景色和效果变更
   _updateCorrelationChooseBox() {
-    // same zones
+    // Start with the correlated boxes of the currently selected cell
+    Set<int> indexSet = Set();
     List<int> zoneIndexes =
         Matrix.getZoneIndexes(zone: Matrix.getZone(index: _chooseSudokuBox));
-    // same rows
     List<int> rowIndexes =
         Matrix.getRowIndexes(Matrix.getRow(_chooseSudokuBox));
-    // same columns
     List<int> colIndexes =
         Matrix.getColIndexes(Matrix.getCol(_chooseSudokuBox));
-
-    // 关联的格子
-    Set<int> indexSet = Set();
     indexSet.addAll(zoneIndexes);
     indexSet.addAll(rowIndexes);
     indexSet.addAll(colIndexes);
+
+    // If a number is selected, find all cells with that number and add their correlated boxes
+    if (_perceptionNum != -1) {
+      for (int i = 0; i < 81; i++) {
+        int currentNum = -1;
+        if (_state.sudoku != null) {
+          currentNum = _state.sudoku!.puzzle[i];
+          if (currentNum == -1) {
+            currentNum = _state.record[i];
+          }
+        }
+
+        if (currentNum == _perceptionNum) {
+          // Found a cell with the same number, add its correlated boxes
+          List<int> otherZoneIndexes =
+              Matrix.getZoneIndexes(zone: Matrix.getZone(index: i));
+          List<int> otherRowIndexes =
+              Matrix.getRowIndexes(Matrix.getRow(i));
+          List<int> otherColIndexes =
+              Matrix.getColIndexes(Matrix.getCol(i));
+          indexSet.addAll(otherZoneIndexes);
+          indexSet.addAll(otherRowIndexes);
+          indexSet.addAll(otherColIndexes);
+        }
+      }
+    }
+
     _correlationChooseBoxes = indexSet;
   }
 
@@ -896,10 +919,21 @@ class _SudokuGamePageState extends State<SudokuGamePage>
   }
 
   _updateChooseState(index) {
+    // Step 1: Clear all highlights
     setState(() {
-      _chooseSudokuBox = index;
-      _updateCorrelationChooseBox();
-      _choosePerception(index);
+      _chooseSudokuBox = -1;
+      _correlationChooseBoxes = {};
+      _perceptionNum = -1;
+    });
+
+    // Step 2: After a short delay, apply the new highlights
+    Future.delayed(const Duration(milliseconds: 50), () {
+      if (!mounted) return;
+      setState(() {
+        _chooseSudokuBox = index;
+        _choosePerception(index);
+        _updateCorrelationChooseBox();
+      });
     });
   }
 

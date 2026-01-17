@@ -381,6 +381,7 @@ class _SudokuGamePageState extends State<SudokuGamePage>
               return;
             }
             _gameStackCount();
+            _updateChooseState(_chooseSudokuBox);
           }
         };
       }
@@ -692,20 +693,25 @@ class _SudokuGamePageState extends State<SudokuGamePage>
   Color _gridCellBgColor(int index) {
     Color gridCellBackgroundColor;
 
-    if (index == _chooseSudokuBox) {
-      // 选中的格子
+    int currentNum = -1;
+    if (_state.sudoku != null) {
+      currentNum = _state.sudoku!.puzzle[index];
+      if (currentNum == -1) {
+        currentNum = _state.record[index];
+      }
+    }
+
+    if (index == _chooseSudokuBox || (_perceptionNum != -1 && currentNum == _perceptionNum)) {
+      // selected box or same number as selected
       gridCellBackgroundColor = Color.fromARGB(255, 0x7A, 0xF8, 0xF8);
     } else if (_correlationChooseBoxes.contains(index)) {
-      // 关联的格子
+      // correlated boxes
       gridCellBackgroundColor = Color.fromARGB(255, 0x44, 0xCE, 0xF6);
     } else {
-      // 其他格子
+      // default alternating colors
       if (Matrix.getZone(index: index).isOdd) {
-        // 奇数宫 1,3,5,7 背景为白色 (从 0 开始)
         gridCellBackgroundColor = Colors.white;
       } else {
-        // 偶数宫 0,2,4,6,8 背景为浅灰色
-        // gridCellBackgroundColor = Color.fromARGB(255, 0xDF, 0xDF, 0xDF);
         gridCellBackgroundColor = Color.fromARGB(255, 0xEE, 0xEE, 0xEE);
       }
     }

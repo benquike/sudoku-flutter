@@ -9,6 +9,7 @@
     "description": "ゲームを続けるボタンのテキスト"
   },
   "menuAISolver": "数独スナップショット",
+  "aiScanTitle": "AIスキャン",
   "levelCancel": "キャンセル",
   "levelEasy": "簡単",
   "levelMedium": "中級",

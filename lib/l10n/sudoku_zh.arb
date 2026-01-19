@@ -9,6 +9,7 @@
     "description":"menu of 'continue game' button text"
   },
   "menuAISolver" : "数独快拍",
+  "aiScanTitle": "AI扫描",
   "levelCancel": "取消",
   "levelEasy": "简单",
   "levelMedium": "中等",

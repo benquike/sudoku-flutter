@@ -9,6 +9,7 @@
     "description":"menu of 'continue game' button text"
   },
   "menuAISolver" : "Sudoku Lens",
+  "aiScanTitle": "Scan IA",
   "levelCancel": "Annuler",
   "levelEasy": "Simple",
   "levelMedium": "Moyen",

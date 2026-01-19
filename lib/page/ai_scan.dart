@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sudoku/l10n/sudoku_localizations.dart';
 import 'package:image/image.dart' as img;
 import 'package:logger/logger.dart';
@@ -31,6 +32,7 @@ class AIScanPage extends StatefulWidget {
 class AIScanPageState extends State<AIScanPage> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
+  final ImagePicker _picker = ImagePicker();
 
   bool _isPredicting = false;
 
@@ -53,7 +55,15 @@ class AIScanPageState extends State<AIScanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: const Text('Take a picture')),
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.aiScanTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.photo_library),
+            onPressed: _pickImage,
+          ),
+        ],
+      ),
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
         builder: (context, snapshot) {
@@ -113,10 +123,26 @@ class AIScanPageState extends State<AIScanPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _predictPicture,
-        child: const Icon(Icons.lens_blur),
+        child: const Icon(Icons.camera),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
+  }
+
+  /// 从相册中选择图片并预测
+  _pickImage() async {
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+      if (image == null) {
+        return;
+      }
+      final imageBytes = await image.readAsBytes();
+      ui.Image uiImage = await decodeImageFromList(imageBytes);
+      await _processImage(uiImage, fromCamera: false);
+    } catch (e, stacktrace) {
+      log.e(e, stackTrace: stacktrace);
+      CrashlyticsUtil.recordError(e, stacktrace);
+    }
   }
 
   /// 预测照片中的数独
@@ -130,6 +156,23 @@ class AIScanPageState extends State<AIScanPage> {
         return;
       }
 
+      // 数独检测 , 此处需要补充对图片进行剪切处理,降低图片尺寸也许可以加快推理时间 ??
+      final picture = await _controller.takePicture();
+      final pictureBytes = await picture.readAsBytes();
+      ui.Image uiPicture = await decodeImageFromList(pictureBytes);
+      await _processImage(uiPicture, fromCamera: true);
+    } catch (e, stacktrace) {
+      log.e(e, stackTrace: stacktrace);
+      CrashlyticsUtil.recordError(e, stacktrace);
+    }
+  }
+
+  /// process image and predict sudoku
+  _processImage(ui.Image uiPicture, {required bool fromCamera}) async {
+    try {
+      if (!context.mounted) {
+        return;
+      }
       // show loading indicator
       setState(() {
         _isPredicting = true;
@@ -138,40 +181,36 @@ class AIScanPageState extends State<AIScanPage> {
       var sudokuPredictor = await DetectorFactory.getSudokuDetector();
       var digitsPredictor = await DetectorFactory.getDigitsDetector();
 
-      // 数独检测 , 此处需要补充对图片进行剪切处理,降低图片尺寸也许可以加快推理时间 ??
-      final picture = await _controller.takePicture();
-      final pictureBytes = await picture.readAsBytes();
-      ui.Image uiPicture = await decodeImageFromList(pictureBytes);
+      ui.Image uiLensImg;
 
-      // 原相片大小 origin photo size
-      final pictureHeight = uiPicture.height;
-      final pictureWidth = uiPicture.width;
+      if (fromCamera) {
+        // 原相片大小 origin photo size
+        final pictureHeight = uiPicture.height;
+        final pictureWidth = uiPicture.width;
 
-      // 取中间取景图像 , 排除掉遮罩部分
-      // 计算上下/左右遮罩的比例
-      final (lrScale, tbScale) = _getLensOverlayScale(context);
+        // 取中间取景图像 , 排除掉遮罩部分
+        // 计算上下/左右遮罩的比例
+        final (lrScale, tbScale) = _getLensOverlayScale(context);
 
-      // 取景器的x,y,w,h
-      final double lensPicX = pictureWidth * lrScale;
-      final double lensPicY = pictureHeight * tbScale;
-      final double lensPicW = pictureWidth - lensPicX * 2;
-      final double lensPicH = pictureHeight - lensPicY * 2;
+        // 取景器的x,y,w,h
+        final double lensPicX = pictureWidth * lrScale;
+        final double lensPicY = pictureHeight * tbScale;
+        final double lensPicW = pictureWidth - lensPicX * 2;
+        final double lensPicH = pictureHeight - lensPicY * 2;
 
-      final lensImg = img.copyCrop(
-        await ImageUtil.convertFlutterUiToImage(uiPicture),
-        x: lensPicX.toInt(),
-        y: lensPicY.toInt(),
-        width: lensPicW.toInt(),
-        height: lensPicH.toInt(),
-      );
-      final uiLensImg = await ImageUtil.convertImageToFlutterUi(lensImg);
-      final lensImgBytes = img.encodeJpg(lensImg).buffer.asUint8List();
+        final lensImg = img.copyCrop(
+          await ImageUtil.convertFlutterUiToImage(uiPicture),
+          x: lensPicX.toInt(),
+          y: lensPicY.toInt(),
+          width: lensPicW.toInt(),
+          height: lensPicH.toInt(),
+        );
+        uiLensImg = await ImageUtil.convertImageToFlutterUi(lensImg);
+      } else {
+        uiLensImg = uiPicture;
+      }
 
-      // 静态图片用于测试推理结果 - static image is using on test predict result
-      // String imagePath = "assets/image/10.png";
-      // var imgByteData = await rootBundle.load(imagePath);
-      // var lensImgBytes = imgByteData.buffer.asUint8List();
-      // ui.Image uiLensImg = await decodeImageFromList(lensImgBytes);
+      final lensImgBytes = img.encodeJpg(await ImageUtil.convertFlutterUiToImage(uiLensImg)).buffer.asUint8List();
 
       var input = YoloV8Input.readImgBytes(lensImgBytes);
       YoloV8Output sudokuOutput = sudokuPredictor.predict(input);
@@ -210,19 +249,28 @@ class AIScanPageState extends State<AIScanPage> {
       }
 
       // disable loading indicator
-      setState(() {
-        _isPredicting = false;
-      });
+      if (context.mounted) {
+        setState(() {
+          _isPredicting = false;
+        });
+      }
 
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => AIDetectPaintPage(
-              image: uiShowImg, imageBytes: showImgBytes, output: detectOutput),
-        ),
-      );
+      if (context.mounted) {
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => AIDetectPaintPage(
+                image: uiShowImg, imageBytes: showImgBytes, output: detectOutput),
+          ),
+        );
+      }
     } catch (e, stacktrace) {
       log.e(e, stackTrace: stacktrace);
       CrashlyticsUtil.recordError(e, stacktrace);
+      if (context.mounted) {
+        setState(() {
+          _isPredicting = false;
+        });
+      }
     }
   }
 

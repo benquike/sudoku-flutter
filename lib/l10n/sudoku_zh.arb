@@ -31,6 +31,10 @@
   "closeMarkText" : "关闭笔记",
   "exitGameText" : "退出游戏",
   "exitGameContentText": "是否要结束本轮数独？",
+  "highlightButtonText": "高亮",
+  "@highlightButtonText": {
+    "description": "Text for the highlight button"
+  },
   "openText" : "打开",
   "cancelText" : "取消",
   "pauseText" : "暂停游戏",

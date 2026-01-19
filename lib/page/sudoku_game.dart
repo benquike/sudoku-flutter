@@ -710,8 +710,7 @@ class _SudokuGamePageState extends State<SudokuGamePage>
                           _highlightEnabled = !_highlightEnabled;
                         });
                       },
-                      child:
-                          _toolContentWrapper(highlightAssetSvg, "Highlight"),
+                                          child: _toolContentWrapper(highlightAssetSvg, AppLocalizations.of(context)!.highlightButtonText),
                     ))),
             // 退出 exit
             Expanded(

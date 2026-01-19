@@ -42,5 +42,9 @@
   "winnerConclusionText": "おめでとうございます！[%level%]の数独チャレンジをクリアしました！",
   "failureConclusionText": "残念ながら、[%level%]の数独でエラー回数が多すぎました。チャレンジに失敗しました！",
 
-  "aiSolverLensScanTipsText": "カメラを使用して数独を撮影して認識します"
+  "aiSolverLensScanTipsText": "カメラを使用して数独を撮影して認識します",
+  "highlightButtonText": "ハイライト",
+  "@highlightButtonText": {
+    "description": "Text for the highlight button"
+  }
 }

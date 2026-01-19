@@ -41,5 +41,9 @@
   "winnerConclusionText" : "Congratulations on completing the [%level%] Sudoku challenge!",
   "failureConclusionText": "Cette ronde de Sudoku [%level%] avait trop d’erreurs. Le défi a échoué!",
 
-  "aiSolverLensScanTipsText": "take pictures to solve puzzle"
+  "aiSolverLensScanTipsText": "take pictures to solve puzzle",
+  "highlightButtonText": "Surligner",
+  "@highlightButtonText": {
+    "description": "Text for the highlight button"
+  }
 }

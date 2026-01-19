@@ -41,5 +41,9 @@
   "winnerConclusionText" : "Congratulations on completing the [%level%] Sudoku challenge!",
   "failureConclusionText": "This round of Sudoku [%level%] had too many errors. Challenge failed!",
 
-  "aiSolverLensScanTipsText": "take pictures to solve puzzle"
+  "aiSolverLensScanTipsText": "take pictures to solve puzzle",
+  "highlightButtonText": "Highlight",
+  "@highlightButtonText": {
+    "description": "Text for the highlight button"
+  }
 }

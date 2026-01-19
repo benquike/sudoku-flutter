@@ -130,6 +130,7 @@ class _SudokuGamePageState extends State<SudokuGamePage>
   bool _manualPause = false;
   bool _highlightEnabled = true;
   bool _intelModeEnabled = false;
+  List<int>? _validCandidates;
 
   SudokuState get _state => ScopedModel.of<SudokuState>(context);
 
@@ -340,12 +341,28 @@ class _SudokuGamePageState extends State<SudokuGamePage>
       if (!hasNumStock) {
         fillOnPressed = null;
       } else {
-        fillOnPressed = () async {
-          log.d("input : $num");
-          if (_isOnlyReadGrid(_chooseSudokuBox)) {
-            // 非填空项
-            return;
+        bool isValidCandidate = true;
+        if (_validCandidates != null) {
+          if (!_validCandidates!.contains(num)) {
+            isValidCandidate = false;
           }
+        }
+
+        if (!isValidCandidate) {
+           fillOnPressed = null;
+        } else {
+          fillOnPressed = () async {
+            // Reset candidates on valid input
+             if (_validCandidates != null) {
+                setState(() {
+                  _validCandidates = null;
+                });
+             }
+            log.d("input : $num");
+            if (_isOnlyReadGrid(_chooseSudokuBox)) {
+              // 非填空项
+              return;
+            }
           if (_state.status != SudokuGameStatus.gaming) {
             // 未在游戏进行时
             return;
@@ -401,6 +418,7 @@ class _SudokuGamePageState extends State<SudokuGamePage>
           }
         };
       }
+    }
 
       Color recordFontColor = hasNumStock ? Colors.black : Colors.white;
       Color recordBgColor = hasNumStock ? Colors.black12 : Colors.white24;
@@ -857,6 +875,9 @@ class _SudokuGamePageState extends State<SudokuGamePage>
       customBorder: Border.all(color: Colors.blue),
       child: _cellContainer,
       onTap: onTap,
+      onDoubleTap: () {
+        _handleDoubleTap(index);
+      },
     );
   }
 
@@ -869,6 +890,9 @@ class _SudokuGamePageState extends State<SudokuGamePage>
         highlightColor: Colors.blue,
         customBorder: Border.all(color: Colors.blue),
         onTap: onTap,
+        onDoubleTap: () {
+          _handleDoubleTap(index);
+        },
         child: Container(
             alignment: Alignment.center,
             margin: EdgeInsets.all(1),
@@ -986,6 +1010,7 @@ class _SudokuGamePageState extends State<SudokuGamePage>
       _chooseSudokuBox = -1;
       _correlationChooseBoxes = {};
       _perceptionNum = -1;
+      _validCandidates = null;
     });
 
     // Step 2: After a short delay, apply the new highlights
@@ -996,6 +1021,54 @@ class _SudokuGamePageState extends State<SudokuGamePage>
         _choosePerception(index);
         _updateCorrelationChooseBox();
       });
+    });
+  }
+
+  List<int> _calculateValidCandidates(int index) {
+    Set<int> existingNumbers = {};
+    
+    // Row
+    int row = Matrix.getRow(index);
+    List<int> rowIndexes = Matrix.getRowIndexes(row);
+    for (int i in rowIndexes) {
+      if (_state.sudoku!.puzzle[i] != -1) existingNumbers.add(_state.sudoku!.puzzle[i]);
+      if (_state.record[i] != -1) existingNumbers.add(_state.record[i]);
+    }
+    
+    // Col
+    int col = Matrix.getCol(index);
+    List<int> colIndexes = Matrix.getColIndexes(col);
+    for (int i in colIndexes) {
+      if (_state.sudoku!.puzzle[i] != -1) existingNumbers.add(_state.sudoku!.puzzle[i]);
+      if (_state.record[i] != -1) existingNumbers.add(_state.record[i]);
+    }
+    
+    // Zone
+    int zone = Matrix.getZone(index: index);
+    List<int> zoneIndexes = Matrix.getZoneIndexes(zone: zone);
+    for (int i in zoneIndexes) {
+      if (_state.sudoku!.puzzle[i] != -1) existingNumbers.add(_state.sudoku!.puzzle[i]);
+      if (_state.record[i] != -1) existingNumbers.add(_state.record[i]);
+    }
+
+    List<int> candidates = [];
+    for (int i = 1; i <= 9; i++) {
+      if (!existingNumbers.contains(i)) {
+        candidates.add(i);
+      }
+    }
+    return candidates;
+  }
+
+  _handleDoubleTap(int index) {
+    if (_state.sudoku!.puzzle[index] != -1 || _state.record[index] != -1) {
+      // Not empty
+      return;
+    }
+    setState(() {
+      _validCandidates = _calculateValidCandidates(index);
+      _chooseSudokuBox = index; // Ensure it's selected
+      _updateCorrelationChooseBox(); // Update visuals
     });
   }
 

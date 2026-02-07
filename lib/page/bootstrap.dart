@@ -186,7 +186,7 @@ void _internalSudokuGenerate(List<dynamic> args) {
   beginTime = DateTime.now();
   // 生成题目速度比较慢,尝试使用native生成 , 解题普遍速度较快,继续使用 sudoku_dart
   // native 生成 加上 dart 解题 速度提升非常显著
-  List<int> puzzle = SudokuNativeHelper.instance.generate(level.index);
+  List<int> puzzle = SudokuHelper.instance.generate(level.index);
   Sudoku sudoku = Sudoku(puzzle);
   // Sudoku sudoku = Sudoku.generate(level);
   endTime = DateTime.now();

@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:ffi/ffi.dart';
-import 'dart:ffi';
-import 'dart:io' show Platform;
+
+
+
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -118,7 +118,7 @@ class _AIDetectionMainWidgetState extends State<AIDetectionMainWidget> {
         var beginCheckTime = DateTime.now();
         // Sudoku(puzzle, strict: true);
         List<int> solution =
-            SudokuNativeHelper.instance!.solve(puzzle, isStrict: true);
+            SudokuHelper.instance.solve(puzzle);
         var endCheckTime = DateTime.now();
         log.d(
             "check one solution time: ${endCheckTime.difference(beginCheckTime)}");

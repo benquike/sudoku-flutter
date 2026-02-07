@@ -1,83 +1,47 @@
-import 'dart:ffi';
-import 'dart:io' show Platform;
+import 'package:sudoku_dart/sudoku_dart.dart' as sd;
 
-import 'package:ffi/ffi.dart';
-import 'package:logger/logger.dart' hide Level;
-import 'package:sudoku/native/nativefl.dart';
+class SudokuHelper {
+  static final SudokuHelper _instance = SudokuHelper._internal();
 
-Logger log = Logger();
-
-class SudokuNativeHelper {
-  static final SudokuNativeHelper _instance = SudokuNativeHelper._internal();
-
-  static final DynamicLibrary _dylib = Platform.isAndroid
-      ? DynamicLibrary.open("libsudoku.so")
-      : DynamicLibrary.process();
-
-  // static final DynamicLibrary _dylib = DynamicLibrary.open("libsudoku.so");
-  late final _nf;
-
-  SudokuNativeHelper._internal() {
-    _nf = Nativefl(_dylib);
-  }
+  SudokuHelper._internal();
 
   static get instance {
     return _instance;
   }
 
-  factory SudokuNativeHelper() {
+  factory SudokuHelper() {
     return _instance;
   }
 
-  List<int> solve(List<int> puzzle, {bool isStrict = false}) {
-    final inputPointer = calloc.allocate<Void>(81);
-    final outputPointer = calloc.allocate<Void>(sizeOf<sudoku_channel>());
-
-    inputPointer.cast<Int8>().asTypedList(81).setAll(0, puzzle);
-
-    _nf.Solve(inputPointer, isStrict ? 1 : 0, outputPointer);
-
-    final sudokuChannel = outputPointer.cast<sudoku_channel>().ref;
-    final isError = sudokuChannel.err != 0;
-    if (isError) {
-      log.e("native sudoku solver error");
-      throw Exception("native sudoku solver error");
+  List<int> solve(List<int> puzzle) {
+    final solvedSudoku = sd.Sudoku(puzzle).solution;
+    if (solvedSudoku == null) {
+      throw Exception("Sudoku cannot be solved.");
     }
-
-    final matrixPointer = sudokuChannel.matrix;
-    var nativeSolution = matrixPointer.cast<Int8>().asTypedList(81);
-
-    List<int> solution = [];
-    for (var item in nativeSolution) {
-      solution.add(item);
-    }
-    calloc.free(inputPointer);
-    calloc.free(outputPointer);
-
-    return solution;
+    return solvedSudoku;
   }
 
   List<int> generate(int level) {
-    final outputPointer = calloc.allocate<Void>(81);
-
-    _nf.Generate(level, outputPointer);
-
-    final sudokuChannel = outputPointer.cast<sudoku_channel>().ref;
-    final isError = sudokuChannel.err != 0;
-
-    if (isError) {
-      log.e("native sudoku generate error");
-      throw Exception("native sudoku generate error");
+    sd.Level difficulty;
+    switch (level) {
+      case 0:
+        difficulty = sd.Level.easy;
+        break;
+      case 1:
+        difficulty = sd.Level.medium;
+        break;
+      case 2:
+        difficulty = sd.Level.hard;
+        break;
+      case 3:
+      case 4:
+      case 5:
+        difficulty = sd.Level.expert;
+        break;
+      default:
+        difficulty = sd.Level.medium; // Default to medium if level is unknown or unsupported
     }
-    final matrix = sudokuChannel.matrix;
-    final result = matrix.cast<Int8>().asTypedList(81);
-
-    List<int> puzzle = [];
-    for (var item in result) {
-      puzzle.add(item);
-    }
-    calloc.free(outputPointer);
-
-    return puzzle;
+    final generatedSudoku = sd.Sudoku.generate(difficulty);
+    return generatedSudoku.puzzle;
   }
 }

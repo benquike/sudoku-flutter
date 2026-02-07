@@ -213,7 +213,7 @@ class AIScanPageState extends State<AIScanPage> {
       final lensImgBytes = img.encodeJpg(await ImageUtil.convertFlutterUiToImage(uiLensImg)).buffer.asUint8List();
 
       var input = YoloV8Input.readImgBytes(lensImgBytes);
-      YoloV8Output sudokuOutput = sudokuPredictor.predict(input);
+      YoloV8Output sudokuOutput = await sudokuPredictor.predict(input);
 
       final uiShowImg, showImgBytes, detectOutput;
       if (sudokuOutput.boxes.isNotEmpty) {
@@ -236,7 +236,7 @@ class AIScanPageState extends State<AIScanPage> {
             await ImageUtil.convertImageToFlutterUi(cropSudokuImg);
         final cropSudokuImgBytes =
             img.encodeJpg(cropSudokuImg).buffer.asUint8List();
-        YoloV8Output digitsOutput = digitsPredictor
+        YoloV8Output digitsOutput = await digitsPredictor
             .predict(YoloV8Input.readImgBytes(cropSudokuImgBytes));
 
         uiShowImg = uiCropSudokuImg;

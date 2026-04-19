@@ -1027,7 +1027,7 @@ class _SudokuGamePageState extends State<SudokuGamePage>
         if (_state.sudoku!.puzzle[index] == -1 && _state.record[index] == -1) {
           _validCandidates = _calculateValidCandidates(index);
         } else {
-          _validCandidates = null;
+          _validCandidates = [];
         }
       });
     });

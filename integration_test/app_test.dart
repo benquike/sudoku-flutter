@@ -79,5 +79,38 @@ void main() {
     // certainly result in SOME numbers being disabled.
     expect(disabledCount, greaterThan(0), reason: 'Expected at least one candidate to be disabled.');
     expect(enabledCount, greaterThan(0), reason: 'Expected at least one candidate to be enabled.');
+
+    // 6. Find a non-empty cell.
+    Finder? nonEmptyCellFinder;
+    for (int i = 0; i < 81; i++) {
+      final cellFinder = find.byKey(ValueKey('cell_$i'));
+      final textFinder = find.descendant(of: cellFinder, matching: find.byType(Text));
+      if (textFinder.evaluate().isNotEmpty) {
+        final Text textWidget = tester.widget<Text>(textFinder.first);
+        if (textWidget.data != null && textWidget.data!.isNotEmpty) {
+          nonEmptyCellFinder = cellFinder;
+          break;
+        }
+      }
+    }
+    
+    expect(nonEmptyCellFinder, isNotNull, reason: 'Expected to find at least one non-empty cell.');
+
+    // 7. Tap the non-empty cell
+    await tester.tap(nonEmptyCellFinder!);
+    await tester.pump(const Duration(milliseconds: 500)); // wait for selection state to update
+    
+    // 8. Verify all inputs are disabled
+    int fullyDisabledCount = 0;
+    for (int i = 1; i <= 9; i++) {
+      final buttonFinder = find.byKey(ValueKey('input_$i'));
+      expect(buttonFinder, findsOneWidget);
+      final CupertinoButton button = tester.widget<CupertinoButton>(buttonFinder);
+      if (button.onPressed == null) {
+        fullyDisabledCount++;
+      }
+    }
+    
+    expect(fullyDisabledCount, 9, reason: 'Expected ALL candidates to be disabled for a non-empty cell.');
   });
 }

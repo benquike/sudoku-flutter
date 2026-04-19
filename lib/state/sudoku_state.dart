@@ -2,6 +2,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logger/logger.dart' hide Level;
 import 'package:scoped_model/scoped_model.dart';
 import 'package:sprintf/sprintf.dart';
+import 'package:sudoku/config/app_config.dart';
 import 'package:sudoku/constant.dart';
 import 'package:sudoku/state/hive/level_type_adapter.dart';
 import 'package:sudoku/state/hive/sudoku_type_adapter.dart';
@@ -327,7 +328,7 @@ class SudokuState extends Model {
   static final SudokuLevelAdapter _sudokuLevelAdapter = SudokuLevelAdapter();
 
   static _initHive() async {
-    await Hive.initFlutter(Constant.packageName);
+    await Hive.initFlutter(AppConfig.forEnvironment().hivePackageName);
     if (!Hive.isAdapterRegistered(_sudokuAdapter.typeId)) {
       Hive.registerAdapter<Sudoku>(_sudokuAdapter);
     }

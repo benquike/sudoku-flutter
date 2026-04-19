@@ -9,6 +9,7 @@ import 'package:sudoku/l10n/sudoku_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:logger/logger.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:sudoku/config/app_config.dart';
 import 'package:sudoku/effect/sound_effect.dart';
 import 'package:sudoku/page/bootstrap.dart';
 import 'package:sudoku/page/sudoku_game.dart';
@@ -32,7 +33,7 @@ void main() {
 class MyApp extends StatelessWidget {
   // firebase init
   _firebaseInit() async {
-    if (!Constant.enableGoogleFirebase) {
+    if (!AppConfig.forEnvironment().enableGoogleFirebase) {
       log.i("Google Firebase is disable.");
       return;
     }

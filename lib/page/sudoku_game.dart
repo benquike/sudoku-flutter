@@ -420,11 +420,13 @@ class _SudokuGamePageState extends State<SudokuGamePage>
       }
     }
 
-      Color recordFontColor = hasNumStock ? Colors.black : Colors.white;
-      Color recordBgColor = hasNumStock ? Colors.black12 : Colors.white24;
+      bool isEnabled = fillOnPressed != null;
 
-      Color markFontColor = hasNumStock ? Colors.white : Colors.white;
-      Color markBgColor = hasNumStock ? Colors.black : Colors.white24;
+      Color recordFontColor = isEnabled ? Colors.black : Colors.black26;
+      Color recordBgColor = isEnabled ? Colors.blue[100]! : Colors.grey[300]!;
+
+      Color markFontColor = isEnabled ? Colors.white : Colors.white54;
+      Color markBgColor = isEnabled ? Colors.black87 : Colors.grey[400]!;
 
       int stock = _getNumberStock(num);
 

@@ -436,6 +436,7 @@ class _SudokuGamePageState extends State<SudokuGamePage>
             child: Stack(
               children: [
                 CupertinoButton(
+                    key: ValueKey('input_$num'),
                     color: _markOpen ? markBgColor : recordBgColor,
                     padding: EdgeInsets.all(1),
                     child: Text('${index + 1}',
@@ -870,6 +871,7 @@ class _SudokuGamePageState extends State<SudokuGamePage>
     );
 
     return InkWell(
+      key: ValueKey('cell_$index'),
       highlightColor: Colors.blue,
       customBorder: Border.all(color: Colors.blue),
       child: _cellContainer,
@@ -886,6 +888,7 @@ class _SudokuGamePageState extends State<SudokuGamePage>
   Widget _markGridCellWidget(
       BuildContext context, int index, GestureTapCallback onTap) {
     Widget markGrid = InkWell(
+        key: ValueKey('cell_$index'),
         highlightColor: Colors.blue,
         customBorder: Border.all(color: Colors.blue),
         onTap: onTap,
@@ -1019,6 +1022,11 @@ class _SudokuGamePageState extends State<SudokuGamePage>
         _chooseSudokuBox = index;
         _choosePerception(index);
         _updateCorrelationChooseBox();
+        if (_state.sudoku!.puzzle[index] == -1 && _state.record[index] == -1) {
+          _validCandidates = _calculateValidCandidates(index);
+        } else {
+          _validCandidates = null;
+        }
       });
     });
   }

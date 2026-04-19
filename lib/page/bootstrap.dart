@@ -108,6 +108,7 @@ Widget _newGameButton(BuildContext context) {
   return _buttonWrapper(
       context,
       (_) => CupertinoButton(
+          key: const ValueKey('newGameBtn'),
           color: Colors.blue,
           child: Text(
             AppLocalizations.of(context)!.menuNewGame,
@@ -140,6 +141,7 @@ Widget _newGameButton(BuildContext context) {
                   child: Container(
                       margin: EdgeInsets.all(1.0),
                       child: CupertinoButton(
+                        key: ValueKey('level_${level.name}'),
                         child: Text(
                           levelName,
                           style: TextStyle(
